@@ -36,7 +36,6 @@ jobs:
           path: dist/let-you-cook
       - run: npm install -g @angular/cli
       - run: |
-          npm install
           ng add --skip-confirmation angular-cli-ghpages
           ng deploy --no-build --repo=https://github.com/iamSunHi/LetYouCook.git --name="iamSunHi" --email=doan.nhathuy.03@gmail.com --dir=dist/let-you-cook/browser
         env:
