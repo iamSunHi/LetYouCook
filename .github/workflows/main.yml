@@ -15,12 +15,29 @@ jobs:
         node-version: '20.x'
     - run: npm ci
     - run: npm run build
-    - name: Deploy to GitHub Pages
-      run: |
-        npm install -g @angular/cli
-        npm install
-        ng add --skip-confirmation angular-cli-ghpages
-        ng build
-        ng deploy --repo=https://github.com/iamSunHi/LetYouCook.git --name="iamSunHi" --email=doan.nhathuy.03@gmail.com --dir=dist/let-you-cook/browser
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4.3.4
+      with:
+        name: letyoucook-artifacts
+        path: dist/let-you-cook
+
+  deploy:
+      runs-on: ubuntu-latest
+      needs: build
+      steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: letyoucook-artifacts
+          path: dist/let-you-cook
+      - run: npm install -g @angular/cli
+      - run: |
+          npm install
+          ng add --skip-confirmation angular-cli-ghpages
+          ng deploy --no-build --repo=https://github.com/iamSunHi/LetYouCook.git --name="iamSunHi" --email=doan.nhathuy.03@gmail.com --dir=dist/let-you-cook/browser
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
